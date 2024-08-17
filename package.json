@@ -9,18 +9,23 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "next": "14.2.5",
     "react": "^18",
-    "react-dom": "^18",
-    "next": "14.2.5"
+    "react-dom": "^18"
   },
   "devDependencies": {
-    "typescript": "^5",
+    "@passwordless-id/webauthn": "^1.5.0",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
-    "postcss": "^8",
-    "tailwindcss": "^3.4.1",
     "eslint": "^8",
-    "eslint-config-next": "14.2.5"
+    "eslint-config-next": "14.2.5",
+    "ethers": "^5.7.2",
+    "postcss": "^8",
+    "react-icons": "^5.0.1",
+    "recoil": "^0.7.7",
+    "tailwindcss": "^3.4.1",
+    "typescript": "^5",
+    "zksync-ethers": "^5.1.0"
   }
 }
