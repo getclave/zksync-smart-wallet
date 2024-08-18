@@ -1,5 +1,5 @@
 import { formatHex } from "@/utils/string";
-import { authenticate } from "@/utils/webauthn";
+import { Webauthn } from "@/utils/webauthn";
 import { AuthenticationEncoded } from "@passwordless-id/webauthn/dist/esm/types";
 import { BigNumber } from "ethers";
 import { defaultAbiCoder } from "ethers/lib/utils";
@@ -11,21 +11,26 @@ export interface IPasskeySigner {
 
 export class Signer implements IPasskeySigner {
   public readonly credentialId: string;
+
   private readonly expectedClientDataPrefix = this.bufferFromString(
     '{"type":"webauthn.get","challenge":"'
   );
-
   private n = BigNumber.from(
     "0xFFFFFFFF00000000FFFFFFFFFFFFFFFFBCE6FAADA7179E84F3B9CAC2FC632551"
   );
   private halfN = this.n.div(2);
+  private webauthn: Webauthn;
 
   constructor(credentialId: string) {
     this.credentialId = credentialId;
+    this.webauthn = new Webauthn();
   }
 
   public async sign(data: string): Promise<string> {
-    const response = await authenticate([this.credentialId], data);
+    const response = await this.webauthn.authenticate(
+      [this.credentialId],
+      data
+    );
     const sanitizedResponse = this.sanitizeResponse(response);
 
     const authenticatorDataBuffer = this.bufferFromBase64url(

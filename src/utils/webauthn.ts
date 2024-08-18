@@ -9,54 +9,54 @@ import type {
   RegisterOptions,
 } from "@passwordless-id/webauthn/dist/esm/types";
 
-export const getWebauthnRegisterOptions = (
-  userHandle?: string
-): {
-  registerOptions: RegisterOptions;
-  authOptions: AuthenticateOptions;
-  algorithm: string;
-} => {
-  return {
-    registerOptions: {
-      authenticatorType: "auto", // extern => remove browser
-      userVerification: "required",
-      timeout: 60000,
-      attestation: false,
-      debug: false,
-      discoverable: "required",
-      userHandle,
-    } as RegisterOptions,
-    authOptions: {
-      authenticatorType: "auto", // extern => remove browser
-      userVerification: "required",
-      timeout: 60000,
-    } as AuthenticateOptions,
-    algorithm: "ES256",
-  };
-};
+export class Webauthn {
+  public async register(
+    username: string,
+    userHandle: string,
+    challenge: string
+  ): Promise<RegistrationEncoded> {
+    const registration = await client.register(
+      username,
+      challenge,
+      this.getWebauthnRegisterOptions(userHandle).registerOptions
+    );
+    return registration;
+  }
 
-export const register = async (
-  username: string,
-  userHandle: string,
-  challenge: string
-): Promise<RegistrationEncoded> => {
-  const registration = await client.register(
-    username,
-    challenge,
-    getWebauthnRegisterOptions(userHandle).registerOptions
-  );
-  return registration;
-};
+  public async authenticate(
+    credentialId: Array<string>,
+    challenge: string
+  ): Promise<AuthenticationEncoded> {
+    const login = await client.authenticate(
+      credentialId,
+      challenge,
+      this.getWebauthnRegisterOptions().authOptions
+    );
 
-export const authenticate = async (
-  credentialId: Array<string>,
-  challenge: string
-): Promise<AuthenticationEncoded> => {
-  const login = await client.authenticate(
-    credentialId,
-    challenge,
-    getWebauthnRegisterOptions().authOptions
-  );
+    return login;
+  }
 
-  return login;
-};
+  private getWebauthnRegisterOptions(userHandle?: string): {
+    registerOptions: RegisterOptions;
+    authOptions: AuthenticateOptions;
+    algorithm: string;
+  } {
+    return {
+      registerOptions: {
+        authenticatorType: "auto", // extern => remove browser
+        userVerification: "required",
+        timeout: 60000,
+        attestation: false,
+        debug: false,
+        discoverable: "required",
+        userHandle,
+      } as RegisterOptions,
+      authOptions: {
+        authenticatorType: "auto", // extern => remove browser
+        userVerification: "required",
+        timeout: 60000,
+      } as AuthenticateOptions,
+      algorithm: "ES256",
+    };
+  }
+}
