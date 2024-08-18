@@ -1,5 +1,4 @@
-import { formatHex } from "@/utils/string";
-import { Webauthn } from "@/utils/webauthn";
+import { formatHex, Webauthn } from "@/utils";
 import { AuthenticationEncoded } from "@passwordless-id/webauthn/dist/esm/types";
 import { BigNumber } from "ethers";
 import { defaultAbiCoder } from "ethers/lib/utils";

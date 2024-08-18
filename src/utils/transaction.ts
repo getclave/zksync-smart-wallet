@@ -1,6 +1,4 @@
-import { IPasskeySigner } from "@/utils/signer";
-import { parseHex } from "@/utils/string";
-import { TransactionProps } from "@/utils/types";
+import { IPasskeySigner, parseHex, TransactionProps } from "@/utils";
 import { providers } from "ethers";
 import { defaultAbiCoder } from "ethers/lib/utils";
 import { EIP712Signer, Provider, types, utils } from "zksync-ethers";

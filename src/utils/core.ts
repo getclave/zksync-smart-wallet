@@ -1,7 +1,9 @@
-import { Contract } from "@/utils/contract";
-import { IPasskeySigner } from "@/utils/signer";
-import { Transaction } from "@/utils/transaction";
-import { PopulateTransactionProps } from "@/utils/types";
+import {
+  Contract,
+  IPasskeySigner,
+  Transaction,
+  PopulateTransactionProps,
+} from "@/utils";
 import { BigNumber, constants } from "ethers";
 import { Provider, types, utils } from "zksync-ethers";
 import { DEFAULT_GAS_PER_PUBDATA_LIMIT } from "zksync-ethers/build/src/utils";
