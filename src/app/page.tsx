@@ -1,4 +1,6 @@
+"use client";
 import { Layout } from "@/components/Layout";
+import { Webauthn } from "@/utils";
 import { FaUserPlus } from "react-icons/fa";
 
 export default function Home() {
@@ -9,7 +11,12 @@ export default function Home() {
           <p className="text-2xl text-white text-center">
             ZKsync Smart Wallet Demo
           </p>
-          <button className="text-white flex flex-col items-center justify-center bg-slate-950 p-4 rounded-lg w-full mt-8 border-2 border-slate-800 focus:border-blue-600">
+          <button
+            onClick={async () => {
+              await Webauthn.register("clave", "clave", "dead");
+            }}
+            className="text-white flex flex-col items-center justify-center bg-slate-950 p-4 rounded-lg w-full mt-8 border-2 border-slate-800 focus:border-blue-600"
+          >
             <FaUserPlus className="mr-2" size={32} />
             <p className="text-xl mt-2">Create Smart Wallet</p>
             <p className="text-sm mt-2 text-gray-400">

@@ -10,7 +10,7 @@ import type {
 } from "@passwordless-id/webauthn/dist/esm/types";
 
 export class Webauthn {
-  public async register(
+  public static async register(
     username: string,
     userHandle: string,
     challenge: string
@@ -23,7 +23,7 @@ export class Webauthn {
     return registration;
   }
 
-  public async authenticate(
+  public static async authenticate(
     credentialId: Array<string>,
     challenge: string
   ): Promise<AuthenticationEncoded> {
@@ -36,7 +36,7 @@ export class Webauthn {
     return login;
   }
 
-  private getWebauthnRegisterOptions(userHandle?: string): {
+  private static getWebauthnRegisterOptions(userHandle?: string): {
     registerOptions: RegisterOptions;
     authOptions: AuthenticateOptions;
     algorithm: string;
