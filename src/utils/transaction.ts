@@ -35,6 +35,9 @@ export class Transaction {
     );
   }
 
+  /**
+   * @dev Send the transaction
+   */
   public async send(
     transaction: types.TransactionRequest
   ): Promise<providers.TransactionReceipt> {
@@ -45,6 +48,9 @@ export class Transaction {
     return txReceipt;
   }
 
+  /**
+   * @dev Sign the transaction and send to the network
+   */
   public async signAndSend(): Promise<providers.TransactionReceipt> {
     const signature = await this.sign();
     this.transaction = {
