@@ -1,3 +1,4 @@
+import { IPasskeySigner } from "@/utils/signer";
 import { BigNumber } from "ethers";
 import { Provider, types } from "zksync-ethers";
 
@@ -10,6 +11,6 @@ export type PopulateTransactionProps = {
 export type TransactionProps = {
   transaction: types.TransactionRequest;
   provider: Provider;
-  messageSignerFn: (message: string) => Promise<string>;
+  signer: IPasskeySigner;
   validatorAddress: string;
 };

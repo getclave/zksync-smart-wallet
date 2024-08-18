@@ -1,3 +1,4 @@
+import { IPasskeySigner } from "@/utils/signer";
 import { parseHex } from "@/utils/string";
 import { TransactionProps } from "@/utils/types";
 import { providers } from "ethers";
@@ -7,18 +8,18 @@ import { EIP712Signer, Provider, types, utils } from "zksync-ethers";
 export class Transaction {
   transaction: types.TransactionRequest;
   provider: Provider;
-  messageSignerFn: (message: string) => Promise<string>;
+  signer: IPasskeySigner;
   validatorAddress: string;
 
   constructor({
     transaction,
     provider,
-    messageSignerFn,
+    signer,
     validatorAddress,
   }: TransactionProps) {
     this.transaction = transaction;
     this.provider = provider;
-    this.messageSignerFn = messageSignerFn;
+    this.signer = signer;
     this.validatorAddress = validatorAddress;
   }
 
@@ -28,7 +29,7 @@ export class Transaction {
   public async sign(): Promise<string> {
     const signedTxHash = EIP712Signer.getSignedDigest(this.transaction);
     const message = parseHex(signedTxHash.toString());
-    const signature = await this.messageSignerFn(message);
+    const signature = await this.signer.sign(message);
     return defaultAbiCoder.encode(
       ["bytes", "address", "bytes[]"],
       [signature, this.validatorAddress, []]

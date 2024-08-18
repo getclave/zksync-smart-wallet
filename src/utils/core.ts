@@ -1,3 +1,4 @@
+import { IPasskeySigner } from "@/utils/signer";
 import { Transaction } from "@/utils/transaction";
 import { PopulateTransactionProps } from "@/utils/types";
 import ethers, { BigNumber, constants } from "ethers";
@@ -30,12 +31,12 @@ export class Core {
   /**
    * Function to sign a message
    */
-  private messageSignerFn: (message: string) => Promise<string>;
+  private signer: IPasskeySigner;
 
-  constructor() {
+  constructor(signer: IPasskeySigner) {
     this.provider = new Provider("https://mainnet.era.zksync.io");
     this.publicAddress = constants.AddressZero;
-    this.messageSignerFn = async () => "";
+    this.signer = signer;
   }
 
   /**
@@ -113,7 +114,7 @@ export class Core {
     const populatedTransaction = new Transaction({
       transaction,
       provider: this.provider,
-      messageSignerFn: this.messageSignerFn,
+      signer: this.signer,
       validatorAddress: this.contracts.passkeyValidator,
     });
 

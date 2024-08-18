@@ -4,7 +4,7 @@ import { AuthenticationEncoded } from "@passwordless-id/webauthn/dist/esm/types"
 import { BigNumber } from "ethers";
 import { defaultAbiCoder } from "ethers/lib/utils";
 
-interface IPasskeySigner {
+export interface IPasskeySigner {
   credentialId: string;
   sign: (data: string) => Promise<string>;
 }
