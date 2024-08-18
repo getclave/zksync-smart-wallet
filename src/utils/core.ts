@@ -1,25 +1,12 @@
+import { Contract } from "@/utils/contract";
 import { IPasskeySigner } from "@/utils/signer";
 import { Transaction } from "@/utils/transaction";
 import { PopulateTransactionProps } from "@/utils/types";
-import ethers, { BigNumber, constants } from "ethers";
-import { Interface } from "ethers/lib/utils";
+import { BigNumber, constants } from "ethers";
 import { Provider, types, utils } from "zksync-ethers";
 import { DEFAULT_GAS_PER_PUBDATA_LIMIT } from "zksync-ethers/build/src/utils";
 
 export class Core {
-  /**
-   *Copy your deployed contract addresses from step 2 of this article
-   */
-  private contracts = {
-    batchCaller: "0x238aDD7ad88F264001D1742cc5Cb210b42fdd88c",
-    implementation: "0x73CEB2aC4A5b60f8D2E37fd911e076F0EC2e0a3D",
-    registry: "0x3DEF5e03b57B5e6B5C757fF9e819C23Fe23B2791",
-    gaslessPaymaster: "0x278247E62a9e8618E1EFbc65A8AD5365955e34C3",
-    claveProxy: "0x9f93E3ce1D68385D384174Ac5D62Aa677E4dD696",
-    passkeyValidator: "0x1ccc9D109A96Ffd2A6d0AE976dc1290cC0C7258F",
-    accountFactory: "0xEA96D4604f5E1B0253E44454d5D8d283217A9161",
-  };
-
   /**
    * Provider for the ZKsync Mainnet
    */
@@ -33,24 +20,17 @@ export class Core {
    */
   private signer: IPasskeySigner;
 
+  /**
+   * Deployed contracts and utils
+   */
+  public contracts: Contract;
+
   constructor(signer: IPasskeySigner) {
-    this.provider = new Provider("https://mainnet.era.zksync.io");
+    const _provider = new Provider("https://mainnet.era.zksync.io");
+    this.provider = _provider;
+    this.contracts = new Contract(_provider);
     this.publicAddress = constants.AddressZero;
     this.signer = signer;
-  }
-
-  /**
-   * Getting a specific contract instance
-   */
-  public async getContract(
-    contractName: keyof typeof this.contracts,
-    abi: Interface
-  ) {
-    return new ethers.Contract(
-      this.contracts[contractName],
-      abi,
-      this.provider
-    );
   }
 
   /**
