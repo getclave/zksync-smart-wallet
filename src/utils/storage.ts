@@ -2,10 +2,6 @@ export enum StorageKeys {
   credentialId = "credentialId",
 }
 
-export type StorageValue = {
-  [StorageKeys.credentialId]: string;
-};
-
 export class Storage {
   public static getItem(key: StorageKeys): string | null {
     return localStorage.getItem(key);
