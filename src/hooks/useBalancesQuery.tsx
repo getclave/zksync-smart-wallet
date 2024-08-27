@@ -1,3 +1,4 @@
+'use client';
 import { tokens } from '@/constants';
 import { Balances, useCredentialNullSafe, useSetBalances } from '@/store';
 import { Multicall, Queries } from '@/utils';
@@ -7,7 +8,7 @@ export const useBalancesQuery = () => {
     const credential = useCredentialNullSafe();
     const setBalances = useSetBalances();
 
-    useQuery({
+    const query = useQuery({
         queryKey: [Queries.BALANCES, credential.publicAddress],
         queryFn: async () => {
             const balances = await Multicall.getTokenBalances(
@@ -24,5 +25,8 @@ export const useBalancesQuery = () => {
             return returnData;
         },
         refetchInterval: 10000,
+        gcTime: Infinity,
     });
+
+    return query;
 };

@@ -1,8 +1,7 @@
 'use client';
-import { PageTabs } from '@/components';
-import { Navbar } from '@/components/Navbar';
+import { PageTabs, Navbar } from '@/components';
 import { Page, usePage } from '@/store';
-import { HomeView } from '@/views/HomeView';
+import { HomeView, SendView } from '@/views';
 
 export const WalletView = () => {
     const page = usePage();
@@ -13,7 +12,7 @@ export const WalletView = () => {
             pageRenderer = <HomeView />;
             break;
         case Page.SEND:
-            pageRenderer = <div>Send</div>;
+            pageRenderer = <SendView />;
             break;
         case Page.RECEIVE:
             pageRenderer = <div>Receive</div>;
