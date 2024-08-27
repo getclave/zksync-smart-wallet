@@ -19,15 +19,15 @@ export const Navbar = () => {
               <span className="text-xs text-gray-400">Wallet</span>
               <div className="flex items-center text-sm">
                 {formatAddress(credential.publicAddress)}{" "}
+                <a
+                  className="ml-2"
+                  target="_blank"
+                  href={`https://explorer.zksync.io/address/${credential.publicAddress}`}
+                >
+                  <FaExternalLinkAlt size={14} />
+                </a>
               </div>
             </div>
-            <a
-              className="ml-2"
-              target="_blank"
-              href={`https://explorer.zksync.io/address/${credential.publicAddress}`}
-            >
-              <FaExternalLinkAlt size={14} />
-            </a>
           </div>
         </div>
         <button

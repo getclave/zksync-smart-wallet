@@ -1,6 +1,6 @@
 import { SepoliaProvider, ZKsyncProvider } from "@/utils/provider";
 import { ContractInterface, ethers } from "ethers";
-import { Provider } from "zksync-ethers";
+import { Provider, Wallet } from "zksync-ethers";
 
 type ContractName =
   | "batchCaller"
@@ -38,5 +38,16 @@ export class SmartContract {
    */
   public getContract(contractName: ContractName, abi: ContractInterface) {
     return new ethers.Contract(this[contractName], abi, this.provider);
+  }
+
+  /**
+   * Getting a specific contract instance with EOA signer
+   */
+  public getContractWithEOASigner(
+    contractName: ContractName,
+    abi: ContractInterface,
+    wallet: Wallet
+  ) {
+    return new ethers.Contract(this[contractName], abi, wallet);
   }
 }

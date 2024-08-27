@@ -4,7 +4,7 @@ import Image from "next/image";
 
 export const HomeView = () => {
   return (
-    <div className="space-y-4">
+    <div className="space-y-3">
       {tokens.map((token) => (
         <div
           className="flex bg-slate-900 p-4 rounded-lg items-center"

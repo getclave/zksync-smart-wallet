@@ -4,7 +4,7 @@ import { ZKsyncProvider } from "@/utils/provider";
 import { parseHex } from "@/utils/string";
 import { BigNumber, ethers } from "ethers";
 import { defaultAbiCoder } from "ethers/lib/utils";
-import { Provider, types } from "zksync-ethers";
+import { Provider, types, Wallet } from "zksync-ethers";
 
 type InitCallType = {
   target: string;
@@ -14,15 +14,21 @@ type InitCallType = {
 };
 
 export class Deployer {
-  private readonly provider: Provider;
   private contract: SmartContract;
   private factoryContract: ethers.Contract;
 
   constructor() {
     const contract = new SmartContract();
     this.contract = contract;
-    this.factoryContract = contract.getContract("accountFactory", abiFactory);
-    this.provider = ZKsyncProvider;
+    const deployerWallet = new Wallet(
+      process.env.NEXT_PUBLIC_DEPLOYER_PRIVATE_KEY!,
+      ZKsyncProvider
+    );
+    this.factoryContract = contract.getContractWithEOASigner(
+      "accountFactory",
+      abiFactory,
+      deployerWallet
+    );
   }
 
   public static create(): Deployer {
@@ -31,7 +37,7 @@ export class Deployer {
 
   public getSalt(): string {
     const randomBytes = ethers.utils.randomBytes(32);
-    return ethers.utils.keccak256(Buffer.from(randomBytes));
+    return ethers.utils.sha256(Buffer.from(randomBytes));
   }
 
   public async getRandomAddress(salt: string): Promise<string> {
@@ -73,7 +79,9 @@ export class Deployer {
     );
 
     const initializer = SELECTOR.concat(parseHex(CALLDATA));
-    const tx = await this.factoryContract.deployAccount(salt, initializer);
+    const tx = await this.factoryContract.deployAccount(salt, initializer, {
+      gasLimit: 50_000_000,
+    });
     const receipt: types.TransactionReceipt = await tx.wait();
     return receipt;
   };

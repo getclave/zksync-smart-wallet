@@ -95,9 +95,15 @@ export class Webauthn {
 
   public static getPublicKeyFromAuthenticatorData(authData: string): string {
     const authDataBuffer = Buffer.from(this.toBase64(authData), "base64");
-    const credentialData = authDataBuffer.slice(32 + 1 + 4 + 16); // RP ID Hash + Flags + Counter + AAGUID
-    const l = parseInt(credentialData.slice(0, 2).toString("hex"), 16);
-    const credentialPubKey = credentialData.slice(2 + l); // sizeof(L) + L
+    const credentialData = authDataBuffer.subarray(
+      32 + 1 + 4 + 16,
+      authDataBuffer.length
+    ); // RP ID Hash + Flags + Counter + AAGUID
+    const l = parseInt(credentialData.subarray(0, 2).toString("hex"), 16);
+    const credentialPubKey = credentialData.subarray(
+      2 + l,
+      credentialData.length
+    ); // sizeof(L) + L
     return this.getPublicKeyFromCredentialPublicKey(credentialPubKey);
   }
 
