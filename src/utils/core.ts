@@ -1,8 +1,9 @@
 import {
-  Contract,
+  SmartContract,
   IPasskeySigner,
   Transaction,
   PopulateTransactionProps,
+  SepoliaProvider,
 } from "@/utils";
 import { BigNumber, constants } from "ethers";
 import { Provider, types, utils } from "zksync-ethers";
@@ -25,12 +26,11 @@ export class Core {
   /**
    * Deployed contracts and utils
    */
-  public contracts: Contract;
+  public contracts: SmartContract;
 
   constructor(signer: IPasskeySigner) {
-    const _provider = new Provider("https://mainnet.era.zksync.io");
-    this.provider = _provider;
-    this.contracts = new Contract(_provider);
+    this.provider = SepoliaProvider;
+    this.contracts = SmartContract.create();
     this.publicAddress = constants.AddressZero;
     this.signer = signer;
   }

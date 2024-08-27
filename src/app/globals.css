@@ -9,4 +9,12 @@
 
 body {
   background: rgb(var(--background-rgb));
+
+  * {
+    color: rgb(var(--foreground-rgb));
+  }
+}
+
+.container {
+  @apply max-w-[560px] mx-auto px-4;
 }

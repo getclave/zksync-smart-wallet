@@ -7,3 +7,5 @@ export * from "./string";
 export * from "./transaction";
 export * from "./types";
 export * from "./webauthn";
+export * from "./deployer";
+export * from "./provider";

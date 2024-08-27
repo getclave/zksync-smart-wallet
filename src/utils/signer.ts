@@ -24,16 +24,13 @@ export class Signer implements IPasskeySigner {
   }
 
   public async sign(data: string): Promise<string> {
-    const response = await Webauthn.authenticate([this.credentialId], data);
-    const sanitizedResponse = this.sanitizeResponse(response);
+    const { response } = await Webauthn.authenticate([this.credentialId], data);
 
     const authenticatorDataBuffer = this.bufferFromBase64url(
-      sanitizedResponse.response.authenticatorData
+      response.authenticatorData
     );
-    const clientDataBuffer = this.bufferFromBase64url(
-      sanitizedResponse.response.clientDataJSON
-    );
-    const rs = this.getRS(sanitizedResponse.response.signature);
+    const clientDataBuffer = this.bufferFromBase64url(response.clientDataJSON);
+    const rs = this.getRS(response.signature);
     return this.encodeSigature(authenticatorDataBuffer, clientDataBuffer, rs);
   }
 
@@ -55,22 +52,6 @@ export class Signer implements IPasskeySigner {
     );
   }
 
-  private sanitizeResponse(response: AuthenticationEncoded) {
-    return {
-      id: this.base64ToBase64Url(response.credentialId),
-      rawId: this.base64ToBase64Url(response.credentialId),
-      response: {
-        authenticatorData: this.base64ToBase64Url(response.authenticatorData),
-        clientDataJSON: this.base64ToBase64Url(response.clientData),
-        signature: this.base64ToBase64Url(response.signature),
-        userHandle: response.userHandle
-          ? this.fromBase64Url(response.userHandle)
-          : null,
-      },
-      type: "public-key",
-    };
-  }
-
   private base64ToBase64Url(base64: string) {
     return base64.replace(/\+/g, "-").replace(/\//g, "_").replace(/=/g, "");
   }
@@ -90,6 +71,10 @@ export class Signer implements IPasskeySigner {
 
   private bufferFromBase64url(base64url: string): Buffer {
     return Buffer.from(this.toBase64(base64url), "base64");
+  }
+
+  private bufferToHex(buffer: ArrayBufferLike): string {
+    return formatHex(Buffer.from(buffer).toString("hex"));
   }
 
   private getRS(_signatureBase64: string): Array<BigNumber> {
@@ -149,9 +134,5 @@ export class Signer implements IPasskeySigner {
     }
     const s = der.subarray(dataOffset, dataOffset + 32);
     return [r, s];
-  }
-
-  private bufferToHex(buffer: ArrayBufferLike): string {
-    return formatHex(Buffer.from(buffer).toString("hex"));
   }
 }

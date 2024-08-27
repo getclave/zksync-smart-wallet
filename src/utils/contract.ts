@@ -1,5 +1,5 @@
-import { ethers } from "ethers";
-import { Interface } from "ethers/lib/utils";
+import { SepoliaProvider, ZKsyncProvider } from "@/utils/provider";
+import { ContractInterface, ethers } from "ethers";
 import { Provider } from "zksync-ethers";
 
 type ContractName =
@@ -11,7 +11,7 @@ type ContractName =
   | "passkeyValidator"
   | "accountFactory";
 
-export class Contract {
+export class SmartContract {
   private readonly provider: Provider;
 
   /* Copy your deployed contract addresses from step 2 of this article */
@@ -25,14 +25,18 @@ export class Contract {
     "0x1ccc9D109A96Ffd2A6d0AE976dc1290cC0C7258F";
   public readonly accountFactory = "0xEA96D4604f5E1B0253E44454d5D8d283217A9161";
 
-  constructor(provider: Provider) {
-    this.provider = provider;
+  constructor() {
+    this.provider = ZKsyncProvider;
+  }
+
+  public static create(): SmartContract {
+    return new SmartContract();
   }
 
   /**
    * Getting a specific contract instance
    */
-  public async getContract(contractName: ContractName, abi: Interface) {
+  public getContract(contractName: ContractName, abi: ContractInterface) {
     return new ethers.Contract(this[contractName], abi, this.provider);
   }
 }
