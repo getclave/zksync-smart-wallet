@@ -4,7 +4,7 @@ import { ZKsyncProvider } from "@/utils/provider";
 import { parseHex } from "@/utils/string";
 import { BigNumber, ethers } from "ethers";
 import { defaultAbiCoder } from "ethers/lib/utils";
-import { Provider, types, Wallet } from "zksync-ethers";
+import { types, Wallet, Contract } from "zksync-ethers";
 
 type InitCallType = {
   target: string;
@@ -15,7 +15,7 @@ type InitCallType = {
 
 export class Deployer {
   private contract: SmartContract;
-  private factoryContract: ethers.Contract;
+  private factoryContract: Contract;
 
   constructor() {
     const contract = new SmartContract();
@@ -36,11 +36,10 @@ export class Deployer {
   }
 
   public getSalt(): string {
-    const randomBytes = ethers.utils.randomBytes(32);
-    return ethers.utils.sha256(Buffer.from(randomBytes));
+    return ethers.utils.sha256(Buffer.from(ethers.utils.randomBytes(32)));
   }
 
-  public async getRandomAddress(salt: string): Promise<string> {
+  public async getAddressForSalt(salt: string): Promise<string> {
     const address = await this.factoryContract.getAddressForSalt(salt);
     return address;
   }
@@ -80,7 +79,7 @@ export class Deployer {
 
     const initializer = SELECTOR.concat(parseHex(CALLDATA));
     const tx = await this.factoryContract.deployAccount(salt, initializer, {
-      gasLimit: 50_000_000,
+      gasLimit: 100_000_000,
     });
     const receipt: types.TransactionReceipt = await tx.wait();
     return receipt;

@@ -1,8 +1,38 @@
 "use client";
 import { tokens } from "@/constants/tokens";
+import {
+  Balances,
+  useBalances,
+  useCredentialNullSafe,
+  useSetBalances,
+} from "@/store";
+import { Multicall } from "@/utils";
+import { formatUnits } from "ethers/lib/utils";
 import Image from "next/image";
+import { useEffect } from "react";
 
 export const HomeView = () => {
+  const balances = useBalances();
+  const setBalances = useSetBalances();
+  const credential = useCredentialNullSafe();
+
+  useEffect(() => {
+    Multicall.getTokenBalances(
+      credential.publicAddress,
+      tokens.map((t) => t.address)
+    ).then((balances) => {
+      if (balances == null) {
+        return;
+      }
+
+      const fetchedBalances: Balances = {};
+      balances.forEach((balance) => {
+        fetchedBalances[balance.address] = balance.balance;
+      });
+      setBalances(fetchedBalances);
+    });
+  }, []);
+
   return (
     <div className="space-y-3">
       {tokens.map((token) => (
@@ -17,7 +47,8 @@ export const HomeView = () => {
           </div>
           <div className="ml-auto">
             <p className="text-md">
-              {0.003124} {token.symbol}
+              {formatUnits(balances[token.address], token.decimals)}{" "}
+              {token.symbol}
             </p>
           </div>
         </div>

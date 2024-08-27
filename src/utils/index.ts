@@ -9,3 +9,4 @@ export * from "./types";
 export * from "./webauthn";
 export * from "./deployer";
 export * from "./provider";
+export * from "./multicall";

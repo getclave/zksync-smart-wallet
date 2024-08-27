@@ -16,7 +16,7 @@ body {
 }
 
 .container {
-  @apply max-w-[560px] mx-auto px-4;
+  @apply w-[560px] max-w-[95vw] mx-auto px-4;
 }
 
 .button {

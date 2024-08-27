@@ -219,8 +219,8 @@ export class Webauthn {
     return Buffer.from(this.toBase64(base64url), "base64");
   }
 
-  public static getRS(_signatureBase64: string): Array<BigNumber> {
-    const signatureBuffer = this.bufferFromBase64url(_signatureBase64);
+  public static getRS(signatureBase64Url: string): Array<BigNumber> {
+    const signatureBuffer = this.bufferFromBase64url(signatureBase64Url);
     const signatureParsed = this.derToRS(signatureBuffer);
 
     const sig: Array<BigNumber> = [

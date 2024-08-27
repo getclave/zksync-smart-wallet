@@ -20,7 +20,7 @@ export const AuthView = () => {
   const deployAccount = async () => {
     const deployer = Deployer.create();
     const salt = deployer.getSalt();
-    const publicAddress = await deployer.getRandomAddress(salt);
+    const publicAddress = await deployer.getAddressForSalt(salt);
     const passkey = await Webauthn.register(publicAddress);
     const credential = {
       publicAddress,
@@ -29,6 +29,7 @@ export const AuthView = () => {
     const publicKey = Webauthn.getPublicKeyFromAuthenticatorData(
       passkey.authenticatorData
     );
+
     const deployReceipt = await deployer.deploy(salt, publicKey);
 
     if (deployReceipt.status === 1) {
