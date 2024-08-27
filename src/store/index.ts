@@ -1,3 +1,3 @@
-export * from "./CredentialStore";
-export * from "./PageStore";
-export * from "./BalanceStore";
+export * from './CredentialStore';
+export * from './PageStore';
+export * from './BalanceStore';

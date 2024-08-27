@@ -1,3 +1,3 @@
 export const CONFIG = {
-  chainId: 300,
+    chainId: 300,
 };

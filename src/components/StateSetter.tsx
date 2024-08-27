@@ -1,19 +1,19 @@
-"use client";
-import { Credential, useSetCredential } from "@/store";
-import { Storage, StorageKeys } from "@/utils";
-import { useEffect } from "react";
+'use client';
+import { Credential, useSetCredential } from '@/store';
+import { Storage, StorageKeys } from '@/utils';
+import { useEffect } from 'react';
 
 export const StateSetter = () => {
-  const setCredential = useSetCredential();
+    const setCredential = useSetCredential();
 
-  useEffect(() => {
-    const credetential = Storage.getJsonItem<Credential>(
-      StorageKeys.credential
-    );
-    if (credetential) {
-      setCredential(credetential);
-    }
-  }, [setCredential]);
+    useEffect(() => {
+        const credetential = Storage.getJsonItem<Credential>(
+            StorageKeys.credential,
+        );
+        if (credetential) {
+            setCredential(credetential);
+        }
+    }, [setCredential]);
 
-  return null;
+    return null;
 };
