@@ -34,3 +34,7 @@ body {
 .disabled {
     @apply opacity-50;
 }
+
+.inputLabel {
+    @apply text-sm text-gray-400;
+}

@@ -12,8 +12,7 @@
   "dependencies": {
     "next": "14.2.5",
     "react": "^18",
-    "react-dom": "^18",
-    "react-qrcode-logo": "^3.0.0"
+    "react-dom": "^18"
   },
   "devDependencies": {
     "@passwordless-id/webauthn": "1.5.0",
@@ -33,6 +32,7 @@
     "recoil": "0.7.7",
     "tailwindcss": "^3.4.1",
     "typescript": "^5",
-    "zksync-ethers": "5.1.0"
+    "zksync-ethers": "5.1.0",
+    "react-qrcode-logo": "3.0.0"
   }
 }
