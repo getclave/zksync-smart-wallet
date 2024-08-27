@@ -10,10 +10,33 @@ import type {
   AuthenticateOptions,
   RegisterOptions,
 } from "@passwordless-id/webauthn/dist/esm/types";
-import { ethers } from "ethers";
+import { BigNumber, ethers } from "ethers";
 import { formatHex, parseHex } from "@/utils/string";
 
 export class Webauthn {
+  private static n = BigNumber.from(
+    "0xFFFFFFFF00000000FFFFFFFFFFFFFFFFBCE6FAADA7179E84F3B9CAC2FC632551"
+  );
+  private static halfN = this.n.div(2);
+
+  private static sanitizeAuthenticationResponse(
+    response: AuthenticationEncoded
+  ): WebauthnAuthenticationResponse {
+    return {
+      id: this.base64ToBase64Url(response.credentialId),
+      rawId: this.base64ToBase64Url(response.credentialId),
+      response: {
+        authenticatorData: this.base64ToBase64Url(response.authenticatorData),
+        clientDataJSON: this.base64ToBase64Url(response.clientData),
+        signature: this.base64ToBase64Url(response.signature),
+
+        /* Userhandle might be null if not provided during registration, but we can safely ignore it */
+        userHandle: this.fromBase64Url(response.userHandle!),
+      },
+      type: "public-key",
+    };
+  }
+
   public static async register(publicAddress: string) {
     const registration = await client.register(
       this.getRandomUsername(),
@@ -89,29 +112,12 @@ export class Webauthn {
 
     return x.concat(parseHex(y));
   }
-  private static base64ToBase64Url(base64: string): string {
+
+  public static base64ToBase64Url(base64: string): string {
     return base64.replace(/\+/g, "-").replace(/\//g, "_").replace(/=/g, "");
   }
 
-  private static sanitizeAuthenticationResponse(
-    response: AuthenticationEncoded
-  ): WebauthnAuthenticationResponse {
-    return {
-      id: this.base64ToBase64Url(response.credentialId),
-      rawId: this.base64ToBase64Url(response.credentialId),
-      response: {
-        authenticatorData: this.base64ToBase64Url(response.authenticatorData),
-        clientDataJSON: this.base64ToBase64Url(response.clientData),
-        signature: this.base64ToBase64Url(response.signature),
-
-        /* Userhandle might be null if not provided during registration, but we can safely ignore it */
-        userHandle: this.fromBase64Url(response.userHandle!),
-      },
-      type: "public-key",
-    };
-  }
-
-  private static sanitizeRegistrationResponse(response: RegistrationEncoded) {
+  public static sanitizeRegistrationResponse(response: RegistrationEncoded) {
     return {
       id: this.base64ToBase64Url(response.credential.id),
       rawId: this.base64ToBase64Url(response.credential.id),
@@ -120,11 +126,11 @@ export class Webauthn {
     };
   }
 
-  private static padDateComponent(component: number): string {
+  public static padDateComponent(component: number): string {
     return component.toString().padStart(2, "0");
   }
 
-  private static getWebauthnRegisterOptions(userHandle?: string): {
+  public static getWebauthnRegisterOptions(userHandle?: string): {
     registerOptions: RegisterOptions;
     authOptions: AuthenticateOptions;
     algorithm: string;
@@ -148,15 +154,15 @@ export class Webauthn {
     };
   }
 
-  private static bufferToHex(buffer: ArrayBufferLike): string {
+  public static bufferToHex(buffer: ArrayBufferLike): string {
     return formatHex(Buffer.from(buffer).toString("hex"));
   }
 
-  private static toBase64(input: string | Buffer): string {
+  public static toBase64(input: string | Buffer): string {
     input = input.toString();
     return this.padString(input).replace(/\-/g, "+").replace(/_/g, "/");
   }
-  private static padString(input: string): string {
+  public static padString(input: string): string {
     const segmentLength = 4;
     const stringLength = input.length;
     const diff = stringLength % segmentLength;
@@ -177,5 +183,49 @@ export class Webauthn {
     }
 
     return buffer.toString();
+  }
+
+  public static derToRS(der: Buffer): Array<Buffer> {
+    let offset = 3;
+    let dataOffset: number;
+
+    if (der[offset] == 0x21) {
+      dataOffset = offset + 2;
+    } else {
+      dataOffset = offset + 1;
+    }
+    const r = der.slice(dataOffset, dataOffset + 32);
+    offset = offset + der[offset] + 1 + 1;
+    if (der[offset] == 0x21) {
+      dataOffset = offset + 2;
+    } else {
+      dataOffset = offset + 1;
+    }
+    const s = der.subarray(dataOffset, dataOffset + 32);
+    return [r, s];
+  }
+
+  public static bufferFromString(string: string): Buffer {
+    return Buffer.from(string, "utf8");
+  }
+
+  public static bufferFromBase64url(base64url: string): Buffer {
+    return Buffer.from(this.toBase64(base64url), "base64");
+  }
+
+  public static getRS(_signatureBase64: string): Array<BigNumber> {
+    const signatureBuffer = this.bufferFromBase64url(_signatureBase64);
+    const signatureParsed = this.derToRS(signatureBuffer);
+
+    const sig: Array<BigNumber> = [
+      BigNumber.from(this.bufferToHex(signatureParsed[0])),
+      BigNumber.from(this.bufferToHex(signatureParsed[1])),
+    ];
+
+    if (sig[1].gt(this.halfN)) {
+      sig[1] = this.n.sub(sig[1]);
+    }
+
+    return sig;
   }
 }
