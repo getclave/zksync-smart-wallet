@@ -3,8 +3,9 @@ import {
   IPasskeySigner,
   Transaction,
   PopulateTransactionProps,
-  SepoliaProvider,
+  Signer,
 } from "@/utils";
+import { ZKsyncProvider } from "./provider";
 import { BigNumber, constants } from "ethers";
 import { Provider, types, utils } from "zksync-ethers";
 import { DEFAULT_GAS_PER_PUBDATA_LIMIT } from "zksync-ethers/build/src/utils";
@@ -21,19 +22,27 @@ export class Core {
   /**
    * Function to sign a message
    */
-  private signer: IPasskeySigner;
+  private signer: IPasskeySigner | null;
 
   /**
    * Deployed contracts and utils
    */
   public contracts: SmartContract;
 
-  constructor(signer: IPasskeySigner) {
-    this.provider = SepoliaProvider;
+  constructor() {
+    this.provider = ZKsyncProvider;
     this.contracts = SmartContract.create();
     this.publicAddress = constants.AddressZero;
-    this.signer = signer;
+    this.signer = null;
   }
+
+  /**
+   * @dev Connect the signer
+   */
+  public connect = async (credentialId: string, publicAddress: string) => {
+    this.signer = new Signer(credentialId);
+    this.publicAddress = publicAddress;
+  };
 
   /**
    * @dev Estimate the gas limit for a transaction
@@ -58,6 +67,10 @@ export class Core {
     value = BigNumber.from(0),
     data = "0x",
   }: PopulateTransactionProps) {
+    if (this.signer == null) {
+      throw new Error("Signer is not connected");
+    }
+
     let transaction: types.TransactionRequest = {
       to,
       from: this.publicAddress,
@@ -103,3 +116,5 @@ export class Core {
     return populatedTransaction;
   }
 }
+
+export const core = new Core();

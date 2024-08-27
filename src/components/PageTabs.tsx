@@ -2,39 +2,39 @@
 import { Page, usePage, useSetPage } from "@/store";
 import { mergeClasses } from "@/utils/global";
 
-const inactiveClasses =
-  "inline-block p-4 rounded-t hover:bg-slate-800 cursor-pointer";
-const activeClasses = "text-slate-900 bg-gray-100 rounded-t hover:bg-gray-100";
+const commonClasses = "inline-block p-4 rounded-t cursor-pointer";
+const inactiveClasses = "hover:bg-slate-800 cursor-pointer";
+const activeClasses = "text-slate-900 bg-gray-100 hover:bg-gray-100";
+
+const pages = [
+  {
+    name: "Home",
+    page: Page.HOME,
+  },
+  {
+    name: "Send",
+    page: Page.SEND,
+  },
+  {
+    name: "Receive",
+    page: Page.RECEIVE,
+  },
+];
 
 export const PageTabs = () => {
   const page = usePage();
   const setPage = useSetPage();
 
-  const pages = [
-    {
-      name: "Home",
-      page: Page.HOME,
-    },
-    {
-      name: "Send",
-      page: Page.SEND,
-    },
-    {
-      name: "Receive",
-      page: Page.RECEIVE,
-    },
-  ];
-
   return (
-    <ul className="container mt-4 flex flex-wrap text-sm font-medium text-center border-b border-gray-700">
+    <ul className="container mt-auto flex flex-wrap text-sm font-medium text-center justify-center space-x-10 border-t border-e border-l pt-4 rounded-t-xl border-gray-700">
       {pages.map((p) => {
         return (
-          <li className="me-2">
+          <li className="me-2" key={p.name}>
             <a
               onClick={() => setPage(p.page)}
               className={mergeClasses(
-                inactiveClasses,
-                page === p.page ? activeClasses : undefined
+                commonClasses,
+                page === p.page ? activeClasses : inactiveClasses
               )}
             >
               {p.name}

@@ -18,3 +18,11 @@ body {
 .container {
   @apply max-w-[560px] mx-auto px-4;
 }
+
+.button {
+  @apply py-1 px-4 rounded-md cursor-pointer focus:border-blue-400;
+}
+
+.bDanger {
+  @apply button bg-red-600 border-red-600 border-2 text-white;
+}

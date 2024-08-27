@@ -1,6 +1,6 @@
 "use client";
-import { useCredential, useSetCredential } from "@/store";
-import { Deployer, Storage, StorageKeys, Webauthn } from "@/utils";
+import { useSetCredential } from "@/store";
+import { core, Deployer, Storage, StorageKeys, Webauthn } from "@/utils";
 import { ReactNode } from "react";
 import { FaArrowCircleRight, FaUserPlus } from "react-icons/fa";
 
@@ -11,19 +11,33 @@ type BoxProps = {
   icon: ReactNode;
 };
 export const AuthView = () => {
-  const credential = useCredential();
   const setCredential = useSetCredential();
+
+  const connectSigner = (credentialId: string, publicAddress: string) => {
+    core.connect(credentialId, publicAddress);
+  };
 
   const deployAccount = async () => {
     const deployer = Deployer.create();
-    const publicAddress = await deployer.getRandomAddress();
+    const salt = deployer.getSalt();
+    const publicAddress = await deployer.getRandomAddress(salt);
     const passkey = await Webauthn.register(publicAddress);
     const credential = {
       publicAddress,
       credentialId: passkey.id,
     };
-    Storage.setJsonItem(StorageKeys.credential, credential);
-    setCredential(credential);
+    const publicKey = Webauthn.getPublicKeyFromAuthenticatorData(
+      passkey.authenticatorData
+    );
+    const deployReceipt = await deployer.deploy(salt, publicKey);
+
+    if (deployReceipt.status === 1) {
+      connectSigner(credential.credentialId, credential.publicAddress);
+      Storage.setJsonItem(StorageKeys.credential, credential);
+      setCredential(credential);
+    } else {
+      throw new Error("Failed to deploy the account");
+    }
   };
 
   const loginAccount = async () => {
@@ -32,13 +46,14 @@ export const AuthView = () => {
       publicAddress: passkey.response.userHandle,
       credentialId: passkey.id,
     };
+    connectSigner(credential.credentialId, credential.publicAddress);
     Storage.setJsonItem(StorageKeys.credential, credential);
     setCredential(credential);
   };
 
   return (
     <div className="flex flex-1 justify-center items-center">
-      <div className=" flex flex-col items-center bg-slate-900 border-2 border-slate-800 w-[512px] min-h-[512px] max-w-[95vw] rounded-lg p-8 overflow-hidden">
+      <div className="container bg-slate-900 border-2 border-slate-800 w-[512px] min-h-[512px] max-w-[95vw] rounded-lg p-8 overflow-hidden">
         <p className="text-2xl text-white text-center mb-4">
           ZKsync Smart Wallet Demo
         </p>

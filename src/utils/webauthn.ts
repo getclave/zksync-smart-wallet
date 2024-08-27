@@ -4,12 +4,14 @@ import type {
   AuthenticationEncoded,
   RegistrationEncoded,
 } from "@passwordless-id/webauthn/dist/esm/types";
+import * as cbor from "cbor";
 
 import type {
   AuthenticateOptions,
   RegisterOptions,
 } from "@passwordless-id/webauthn/dist/esm/types";
 import { ethers } from "ethers";
+import { formatHex, parseHex } from "@/utils/string";
 
 export class Webauthn {
   public static async register(publicAddress: string) {
@@ -68,6 +70,25 @@ export class Webauthn {
     return this.base64ToBase64Url(Buffer.from(randomString).toString("base64"));
   }
 
+  public static getPublicKeyFromAuthenticatorData(authData: string): string {
+    const authDataBuffer = Buffer.from(this.toBase64(authData), "base64");
+    const credentialData = authDataBuffer.slice(32 + 1 + 4 + 16); // RP ID Hash + Flags + Counter + AAGUID
+    const l = parseInt(credentialData.slice(0, 2).toString("hex"), 16);
+    const credentialPubKey = credentialData.slice(2 + l); // sizeof(L) + L
+    return this.getPublicKeyFromCredentialPublicKey(credentialPubKey);
+  }
+
+  private static getPublicKeyFromCredentialPublicKey(
+    credentialPublicKey: Uint8Array
+  ): string {
+    const publicKey: Map<-2 | -3 | -1 | 1 | 3, Buffer | number> =
+      cbor.decode(credentialPublicKey);
+
+    const x = this.bufferToHex(publicKey.get(-2) as Buffer);
+    const y = this.bufferToHex(publicKey.get(-3) as Buffer);
+
+    return x.concat(parseHex(y));
+  }
   private static base64ToBase64Url(base64: string): string {
     return base64.replace(/\+/g, "-").replace(/\//g, "_").replace(/=/g, "");
   }
@@ -125,5 +146,36 @@ export class Webauthn {
       } as AuthenticateOptions,
       algorithm: "ES256",
     };
+  }
+
+  private static bufferToHex(buffer: ArrayBufferLike): string {
+    return formatHex(Buffer.from(buffer).toString("hex"));
+  }
+
+  private static toBase64(input: string | Buffer): string {
+    input = input.toString();
+    return this.padString(input).replace(/\-/g, "+").replace(/_/g, "/");
+  }
+  private static padString(input: string): string {
+    const segmentLength = 4;
+    const stringLength = input.length;
+    const diff = stringLength % segmentLength;
+
+    if (!diff) {
+      return input;
+    }
+
+    let position = stringLength;
+    let padLength = segmentLength - diff;
+    const paddedStringLength = stringLength + padLength;
+    const buffer = Buffer.alloc(paddedStringLength);
+
+    buffer.write(input);
+
+    while (padLength--) {
+      buffer.write("=", position++);
+    }
+
+    return buffer.toString();
   }
 }
