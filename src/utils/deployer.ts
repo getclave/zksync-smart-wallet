@@ -51,7 +51,6 @@ export class Deployer {
             headers: {
                 'Content-Type': 'application/json',
             },
-            referrer: undefined,
         });
         const response = await deployRequest.json();
         return response;
