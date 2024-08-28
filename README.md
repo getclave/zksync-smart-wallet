@@ -45,7 +45,7 @@ DEPLOYER_PRIVATE_KEY=****** // Replace stars with your actual private key
 ### Using Your Deployed Contracts
 
 -   Go to `src/utils/contract.ts`
--   Replace the contracts variable with your addresses. Pasting the object will be enough (also visible on Figure 3)
+-   Replace the contracts variable with your addresses
 
 ### Running Development Server
 
