@@ -2,12 +2,13 @@ import {
     SmartContract,
     IPasskeySigner,
     Transaction,
-    PopulateTransactionProps,
     Signer,
+    GetCalldataProps,
+    GetTransactionProps,
 } from '@/utils';
 import { ZKsyncProvider } from './provider';
-import { BigNumber, constants } from 'ethers';
-import { Provider, types, utils } from 'zksync-ethers';
+import { BigNumber, constants, ethers } from 'ethers';
+import { Provider, types } from 'zksync-ethers';
 import { DEFAULT_GAS_PER_PUBDATA_LIMIT } from 'zksync-ethers/build/src/utils';
 
 export class Core {
@@ -39,9 +40,19 @@ export class Core {
     /**
      * @dev Connect the signer
      */
-    public connect = async (credentialId: string, publicAddress: string) => {
+    public connect = async ({
+        credentialId,
+        publicAddress,
+    }: {
+        credentialId: string;
+        publicAddress: string;
+    }) => {
         this.signer = new Signer(credentialId);
         this.publicAddress = publicAddress;
+    };
+
+    public getProvider = (): Provider => {
+        return this.provider;
     };
 
     /**
@@ -54,19 +65,26 @@ export class Core {
             const estimatedGas = await this.provider.estimateGas(transaction);
             return estimatedGas;
         } catch (e) {
+            console.error('Failed to estimate', e);
             const DEFAULT_GAS_LIMIT = 10_000_000;
             return BigNumber.from(DEFAULT_GAS_LIMIT);
         }
     };
 
+    public getCalldata = ({ abi, method, args }: GetCalldataProps): string => {
+        const iface = new ethers.utils.Interface(abi);
+        const calldata = iface.encodeFunctionData(method, args);
+        return calldata;
+    };
+
     /**
      * @dev Prepare a transaction object
      */
-    public async populateTransaction({
+    public async getTransaction({
         to,
         value = BigNumber.from(0),
         data = '0x',
-    }: PopulateTransactionProps) {
+    }: GetTransactionProps) {
         if (this.signer == null) {
             throw new Error('Signer is not connected');
         }
@@ -79,15 +97,6 @@ export class Core {
             type: 113,
             customData: {
                 gasPerPubdata: DEFAULT_GAS_PER_PUBDATA_LIMIT,
-
-                // Gasless Paymaster params
-                paymasterParams: utils.getPaymasterParams(
-                    this.contracts.gaslessPaymaster,
-                    {
-                        type: 'General',
-                        innerInput: new Uint8Array(),
-                    },
-                ),
             },
         };
 
@@ -106,14 +115,15 @@ export class Core {
             chainId,
         };
 
-        const populatedTransaction = new Transaction({
+        const tx = new Transaction({
             transaction,
             provider: this.provider,
             signer: this.signer,
             validatorAddress: this.contracts.passkeyValidator,
+            gaslessPaymasterAddress: this.contracts.gaslessPaymaster,
         });
 
-        return populatedTransaction;
+        return tx;
     }
 }
 

@@ -1,5 +1,4 @@
-import { formatHex, Webauthn } from '@/utils';
-import { AuthenticationEncoded } from '@passwordless-id/webauthn/dist/esm/types';
+import { Webauthn } from '@/utils';
 import { BigNumber } from 'ethers';
 import { defaultAbiCoder } from 'ethers/lib/utils';
 
@@ -32,6 +31,7 @@ export class Signer implements IPasskeySigner {
             response.clientDataJSON,
         );
         const rs = Webauthn.getRS(response.signature);
+
         return this.encodeSigature(
             authenticatorDataBuffer,
             clientDataBuffer,

@@ -11,10 +11,23 @@ export const BalanceStore = atom<Balances>({
     key: 'Balance.Atom',
 });
 
+export const IsBalancesSetStore = atom<boolean>({
+    default: false,
+    key: 'IsBalancesSet.Atom',
+});
+
 export const useBalances = (): Balances => {
     return useRecoilValue(BalanceStore);
 };
 
 export const useSetBalances = () => {
     return useSetRecoilState(BalanceStore);
+};
+
+export const useIsBalancesSet = (): boolean => {
+    return useRecoilValue(IsBalancesSetStore);
+};
+
+export const useSetIsBalancesSet = () => {
+    return useSetRecoilState(IsBalancesSetStore);
 };

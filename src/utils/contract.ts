@@ -11,20 +11,23 @@ type ContractName =
     | 'passkeyValidator'
     | 'accountFactory';
 
+/*
+ * Copy your deployed contract addresses from step 2 of this article:
+ * // LINK HERE
+ */
 const contracts: Record<string, string> = {
-    batchCaller: '0xe72A2d8325719D2c898B34b3E62efA02911c0965',
-    implementation: '0xE4B4a001e6b2772E4aB2C4d818410B31Ea76197f',
-    registry: '0x865794025d87c60042E8D732Cc94De51b5DAB961',
-    gaslessPaymaster: '0x047f29474B4b2f576Ec884c893b10370AA638D63',
-    claveProxy: '0x8A273Ec5229D8f1E62D7423D5e2c53f35AdD2B08',
-    passkeyValidator: '0xF7060C114A9B0C40AaA2F5a011F3BeCb309b724d',
-    accountFactory: '0x847403DaE74221beA08B8F073Cce30475D300045',
+    batchCaller: '0x1513dB8DdC9420728bFb2830AE6784B26Ac9bf25',
+    implementation: '0x5627beD3bA7DFc5D9DbAa0122A52C7F22a2DD4D3',
+    registry: '0x7f273AF2576EA32309c32c9bae2b609B6e4484aC',
+    gaslessPaymaster: '0xF83F534153358AD6643B358AC3953f6467d5DAe7',
+    claveProxy: '0x3b633b071ABFf838d30D1a326744D8277Fad468c',
+    passkeyValidator: '0xDA63bBbc0A1a3F94e95c6bdd2DCB7B7112e3C635',
+    accountFactory: '0x281d01350B4449D6F4B3a58ce7F342c5221E1636',
 };
 
 export class SmartContract {
     private readonly provider: Provider;
 
-    /* Copy your deployed contract addresses from step 2 of this article */
     public readonly batchCaller = contracts.batchCaller;
     public readonly implementation = contracts.implementation;
     public readonly registry = contracts.registry;

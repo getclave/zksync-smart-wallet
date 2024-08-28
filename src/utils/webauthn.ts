@@ -242,4 +242,10 @@ export class Webauthn {
 
         return sig;
     }
+
+    static hexToBase64Url(hex: string): string {
+        return this.base64ToBase64Url(
+            Buffer.from(hex, 'hex').toString('base64'),
+        );
+    }
 }

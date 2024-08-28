@@ -1,18 +1,17 @@
 'use client';
 import { Loading } from '@/components/Loading';
 import { tokens } from '@/constants/tokens';
-import { useBalancesQuery } from '@/hooks';
-import { useBalances } from '@/store';
+import { useBalances, useIsBalancesSet } from '@/store';
 import { formatUnits } from 'ethers/lib/utils';
 import Image from 'next/image';
 
 export const HomeView = () => {
     const balances = useBalances();
-    const { isPending } = useBalancesQuery();
+    const isBalancesSet = useIsBalancesSet();
 
     return (
         <div className="space-y-3">
-            {isPending ? (
+            {!isBalancesSet ? (
                 <Loading />
             ) : (
                 tokens.map((token) => (

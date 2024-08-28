@@ -1,6 +1,6 @@
 'use client';
 import { Credential, useSetCredential } from '@/store';
-import { Storage, StorageKeys } from '@/utils';
+import { core, Storage, StorageKeys } from '@/utils';
 import { useEffect } from 'react';
 
 export const StateSetter = () => {
@@ -12,6 +12,7 @@ export const StateSetter = () => {
         );
         if (credetential) {
             setCredential(credetential);
+            core.connect(credetential);
         }
     }, [setCredential]);
 

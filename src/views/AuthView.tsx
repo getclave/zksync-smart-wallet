@@ -1,5 +1,5 @@
 'use client';
-import { useSetCredential } from '@/store';
+import { Credential, useSetCredential } from '@/store';
 import { core, Deployer, Storage, StorageKeys, Webauthn } from '@/utils';
 import { ReactNode } from 'react';
 import { FaArrowCircleRight, FaUserPlus } from 'react-icons/fa';
@@ -13,8 +13,8 @@ type BoxProps = {
 export const AuthView = () => {
     const setCredential = useSetCredential();
 
-    const connectSigner = (credentialId: string, publicAddress: string) => {
-        core.connect(credentialId, publicAddress);
+    const connectSigner = (credential: Credential) => {
+        core.connect(credential);
     };
 
     const deployAccount = async () => {
@@ -33,7 +33,7 @@ export const AuthView = () => {
         const deployReceipt = await deployer.deploy(salt, publicKey);
 
         if (deployReceipt.status === 1) {
-            connectSigner(credential.credentialId, credential.publicAddress);
+            connectSigner(credential);
             Storage.setJsonItem(StorageKeys.credential, credential);
             setCredential(credential);
         } else {
@@ -47,7 +47,7 @@ export const AuthView = () => {
             publicAddress: passkey.response.userHandle,
             credentialId: passkey.id,
         };
-        connectSigner(credential.credentialId, credential.publicAddress);
+        connectSigner(credential);
         Storage.setJsonItem(StorageKeys.credential, credential);
         setCredential(credential);
     };

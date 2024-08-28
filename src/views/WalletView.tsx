@@ -1,10 +1,12 @@
 'use client';
 import { PageTabs, Navbar } from '@/components';
+import { useBalancesQuery } from '@/hooks';
 import { Page, usePage } from '@/store';
 import { HomeView, ReceiveView, SendView } from '@/views';
 
 export const WalletView = () => {
     const page = usePage();
+    useBalancesQuery();
 
     let pageRenderer = null;
     switch (page) {

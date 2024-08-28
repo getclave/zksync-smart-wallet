@@ -1,9 +1,20 @@
 import { QRCode } from 'react-qrcode-logo';
 import Favicon from '@/app/favicon.png';
 import { useCredentialNullSafe } from '@/store';
+import { useState } from 'react';
 
 export const ReceiveView = () => {
     const credential = useCredentialNullSafe();
+
+    const [addressCopied, setAddressCopied] = useState(false);
+
+    const copyAddress = () => {
+        navigator.clipboard.writeText(credential.publicAddress);
+        setAddressCopied(true);
+        setTimeout(() => {
+            setAddressCopied(false);
+        }, 1000);
+    };
 
     return (
         <div>
@@ -11,8 +22,8 @@ export const ReceiveView = () => {
             <div className="mt-4">
                 <QRCode
                     style={{
-                        width: '100%',
-                        height: '100%',
+                        width: '50%',
+                        height: '50%',
                         borderRadius: 12,
                         margin: 'auto',
                     }}
@@ -29,6 +40,9 @@ export const ReceiveView = () => {
                 <span className="font-semibold">
                     {credential.publicAddress}
                 </span>
+                <button onClick={copyAddress} className="bPrimary mt-4">
+                    {addressCopied ? 'Copied' : 'Copy Address'}
+                </button>
             </div>
         </div>
     );
