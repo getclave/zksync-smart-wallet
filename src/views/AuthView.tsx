@@ -31,7 +31,6 @@ export const AuthView = () => {
         );
 
         const deployReceipt = await deployer.deploy(salt, publicKey);
-
         if (deployReceipt.status === 1) {
             connectSigner(credential);
             Storage.setJsonItem(StorageKeys.credential, credential);

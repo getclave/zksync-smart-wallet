@@ -1,16 +1,20 @@
 import { abiFactory } from '@/utils/abi';
 import { SmartContract } from '@/utils/contract';
-import { ZKsyncProvider } from '@/utils/provider';
 import { parseHex } from '@/utils/string';
 import { BigNumber, ethers } from 'ethers';
 import { defaultAbiCoder } from 'ethers/lib/utils';
-import { types, Wallet, Contract } from 'zksync-ethers';
+import { Contract } from 'zksync-ethers';
 
 type InitCallType = {
     target: string;
     allowFailure: boolean;
     value: BigNumber;
     callData: string;
+};
+
+type DeployParams = {
+    salt: string;
+    initializer: string;
 };
 
 export class Deployer {
@@ -20,14 +24,9 @@ export class Deployer {
     constructor() {
         const contract = new SmartContract();
         this.contract = contract;
-        const deployerWallet = new Wallet(
-            process.env.NEXT_PUBLIC_DEPLOYER_PRIVATE_KEY!,
-            ZKsyncProvider,
-        );
-        this.factoryContract = contract.getContractWithEOASigner(
+        this.factoryContract = contract.getContract(
             'accountFactory',
             abiFactory,
-            deployerWallet,
         );
     }
 
@@ -44,10 +43,24 @@ export class Deployer {
         return address;
     }
 
-    public deploy = async (
+    public async deploy(salt: string, publicKey: string) {
+        const deployParams = this.getDeploymentParams(salt, publicKey);
+        const deployRequest = await fetch('/api/deploy', {
+            method: 'POST',
+            body: JSON.stringify(deployParams),
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            referrer: undefined,
+        });
+        const response = await deployRequest.json();
+        return response;
+    }
+
+    private getDeploymentParams = (
         salt: string,
         publicKey: string,
-    ): Promise<types.TransactionReceipt> => {
+    ): DeployParams => {
         const emptyCall: InitCallType = {
             target: ethers.constants.AddressZero,
             allowFailure: false,
@@ -78,10 +91,10 @@ export class Deployer {
         );
 
         const initializer = SELECTOR.concat(parseHex(CALLDATA));
-        const tx = await this.factoryContract.deployAccount(salt, initializer, {
-            gasLimit: 100_000_000,
-        });
-        const receipt: types.TransactionReceipt = await tx.wait();
-        return receipt;
+
+        return {
+            salt,
+            initializer,
+        };
     };
 }
