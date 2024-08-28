@@ -71,7 +71,7 @@ import { core } from '@/utils';
 // Prepare transaction
 const tx = await core.getTransaction({
     to: '0xc1ECfC78959484df5472b20Cb7D43dC8c57C767A',
-    value: ethers.utils.parseEther(0.001),
+    value: ethers.utils.parseEther('0.001'),
 });
 
 // Send transaction to ZKsync network
@@ -88,7 +88,7 @@ import { abiErc20, core } from '@/utils';
 const USDC_ADDRESS = '0x235171e45abff2a15d117e3179df4cc35ebfae2f';
 const USDC_DECIMALS = 6;
 const RECEIVER = '0xc1ECfC78959484df5472b20Cb7D43dC8c57C767A';
-const AMOUNT = 1;
+const AMOUNT = '1';
 
 // Prepare calldata
 const calldata = core.getCalldata({
