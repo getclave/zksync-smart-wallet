@@ -2,6 +2,8 @@
 
 This is a simple web application that implements client-side interactions with [Clave](https://getclave.io) Smart Contracts. You can deploy your own Clave Contracts and start using this template to interact with them.
 
+<img src="docs/thumbnail.png" width="50%">
+
 ## Setting Up Client Repository
 
 ### Requirements
