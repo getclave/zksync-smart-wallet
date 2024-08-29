@@ -13,7 +13,7 @@ type ContractName =
 
 /*
  * Copy your deployed contract addresses from step 2 of this article:
- * // https://mirror.xyz/asgarovf.eth/s_Tftx4GV4ExkIZ22ENivFOJlgp7hAqjfS4t7enE8zg
+ * https://mirror.xyz/asgarovf.eth/s_Tftx4GV4ExkIZ22ENivFOJlgp7hAqjfS4t7enE8zg
  */
 const contracts: Record<string, string> = {
     batchCaller: '0x1513dB8DdC9420728bFb2830AE6784B26Ac9bf25',
