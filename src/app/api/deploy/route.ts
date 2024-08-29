@@ -1,6 +1,6 @@
 import { abiFactory, RPC_URL, SmartContract } from '@/utils';
 import { ethers } from 'ethers';
-import { Wallet } from 'zksync-ethers';
+import { Provider, Wallet } from 'zksync-ethers';
 
 const DEPLOYER_PRIVATE_KEY = process.env.DEPLOYER_PRIVATE_KEY!;
 
@@ -24,7 +24,10 @@ export async function POST(request: Request) {
         );
     }
 
-    const deployerWallet = new Wallet(DEPLOYER_PRIVATE_KEY, provider);
+    const deployerWallet = new Wallet(
+        DEPLOYER_PRIVATE_KEY,
+        provider as Provider,
+    );
 
     const contracts = SmartContract.create();
     const factoryContract = contracts.getContractWithEOASigner(
