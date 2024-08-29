@@ -1,8 +1,8 @@
 # ZKsync Smart Wallet Demo
 
-This is a simple web application that implements client-side interactions with [Clave](https://getclave.io) Smart Contracts. You can deploy your own Clave Contracts and start using this template to interact with them.
+This is a simple web application that implements client-side interactions with [Clave](https://getclave.io) Smart Contracts. You can deploy your own Clave Contracts and start using this template to interact with them. The setup guide is also published at [this blog](https://mirror.xyz/asgarovf.eth/s_Tftx4GV4ExkIZ22ENivFOJlgp7hAqjfS4t7enE8zg).
 
-<img src="docs/thumbnail.png" width="50%">
+<img src="docs/thumbnail.png" width="100%">
 
 ## Setting Up Client Repository
 
