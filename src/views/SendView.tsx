@@ -1,18 +1,20 @@
 'use client';
 
 import { Token, tokens } from '@/constants';
-import { useBalances } from '@/store';
-import { abiErc20, core, formatBigNumber } from '@/utils';
+import { Page, useBalances, useCredentialNullSafe, useSetPage } from '@/store';
+import { abiErc20, core, formatBigNumber, Queries, queryClient } from '@/utils';
 import { mergeClasses } from '@/utils/global';
 import { useMutation } from '@tanstack/react-query';
 import { ethers } from 'ethers';
 import { useMemo, useState } from 'react';
 
 export const SendView = () => {
+    const credential = useCredentialNullSafe();
+    const balances = useBalances();
+    const setPage = useSetPage();
     const [value, setValue] = useState('');
     const [receiver, setReceiver] = useState('');
     const [selectedToken, setSelectedToken] = useState<Token>(tokens[0]);
-    const balances = useBalances();
 
     const transfer = async () => {
         if (selectedToken.type === 'ERC20') {
@@ -36,6 +38,10 @@ export const SendView = () => {
             });
             await tx.signAndSend();
         }
+
+        await queryClient.invalidateQueries({
+            queryKey: [Queries.BALANCES, credential.publicAddress],
+        });
     };
 
     const transferMutation = useMutation({
@@ -43,6 +49,7 @@ export const SendView = () => {
         onSettled: () => {
             setValue('');
             setReceiver('');
+            setPage(Page.HOME);
         },
     });
 
