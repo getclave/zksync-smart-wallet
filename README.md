@@ -108,3 +108,29 @@ await tx.signAndSend();
 ```
 
 The code block above calls the transfer function from `USDC` contract to send `1 USDC` to `RECEIVER` address.
+
+## Sending Batch Transactions
+
+There are some cases where you may want to send multiple transactions within the same transaction - batch transactions. Batch transactions are only possible with smart contract wallets, and currently, they are the main thing that makes Clave a perfect account abstraction wallet. The following core block allows you batching multiple transactions into a single one:
+
+```ts
+const RECEIVER_1 = '0xc1ECfC78959484df5472b20Cb7D43dC8c57C767A';
+const RECEIVER_2 = '0x94E9b636d0f3BDc08019B450F7f2F4Ef5b4eb2Ca';
+
+const AMOUNT = '0.001';
+
+const tx = await core.getBatchTransaction(
+    {
+        to: RECEIVER_1,
+        value: ethers.utils.parseEther(AMOUNT),
+    },
+    {
+        to: RECEIVER_2,
+        value: ethers.utils.parseEther(AMOUNT),
+    },
+);
+
+await tx.signAndSend();
+```
+
+The code above gets a batch transaction for sending `0.001 ETH` to `RECEIVER_1` and `RECEIVER_2` addresses. You only sign once and send multiple transactions at the same time. By also setting `data` parameter of your transaction, you can call multiple methods from multiple smart contracts to make the user experience of your wallet better and better.
