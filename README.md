@@ -119,6 +119,7 @@ const RECEIVER_2 = '0x94E9b636d0f3BDc08019B450F7f2F4Ef5b4eb2Ca';
 
 const AMOUNT = '0.001';
 
+// Prepare transaction
 const tx = await core.getBatchTransaction(
     {
         to: RECEIVER_1,
@@ -130,6 +131,7 @@ const tx = await core.getBatchTransaction(
     },
 );
 
+// Send transaction to ZKsync network
 await tx.signAndSend();
 ```
 
