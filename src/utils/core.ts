@@ -142,7 +142,7 @@ export class Core {
         const encodedData = defaultAbiCoder.encode(abiBatchCaller, [
             txs.map((tx) => {
                 return {
-                    ...tx,
+                    target: tx.to,
                     value: tx.value ?? BigNumber.from(0),
                     callData: tx.data ?? '0x',
                     allowFailure: false,

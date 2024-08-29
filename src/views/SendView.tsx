@@ -49,6 +49,8 @@ export const SendView = () => {
         onSettled: () => {
             setValue('');
             setReceiver('');
+        },
+        onSuccess: () => {
             setPage(Page.HOME);
         },
     });
