@@ -76,6 +76,7 @@ export const AuthView = () => {
                         icon={<FaUserPlus className="mr-2" size={32} />}
                         title="Create Smart Wallet"
                         text=" Start deploying your Smart Wallet on ZKsync, using Clave infrastructure"
+                        isPending={deployMutation.isPending}
                     />
 
                     <Box
@@ -85,6 +86,7 @@ export const AuthView = () => {
                         icon={<FaArrowCircleRight className="mr-2" size={32} />}
                         title="Login Existing Wallet"
                         text={`Start using your existing Smart Wallet on ZKsync`}
+                        isPending={loginMutation.isPending}
                     />
                 </div>
 
