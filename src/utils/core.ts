@@ -5,11 +5,16 @@ import {
     Signer,
     GetCalldataProps,
     GetTransactionProps,
+    abiBatchCaller,
+    parseHex,
 } from '@/utils';
 import { ZKsyncProvider } from './provider';
 import { BigNumber, constants, ethers } from 'ethers';
 import { Provider, types } from 'zksync-ethers';
 import { DEFAULT_GAS_PER_PUBDATA_LIMIT } from 'zksync-ethers/build/src/utils';
+import { defaultAbiCoder } from 'ethers/lib/utils';
+
+const BATCH_CALL_SIGNATURE = '0x8f0273a9';
 
 export class Core {
     /**
@@ -124,6 +129,28 @@ export class Core {
         });
 
         return tx;
+    }
+
+    public async getBatchTransaction(...txs: Array<GetTransactionProps>) {
+        const to = this.contracts.batchCaller;
+
+        const value = txs.reduce(
+            (acc, tx) => acc.add(tx.value ?? BigNumber.from(0)),
+            BigNumber.from(0),
+        );
+
+        const encodedData = defaultAbiCoder.encode(abiBatchCaller, [
+            txs.map((tx) => {
+                return {
+                    ...tx,
+                    value: tx.value ?? BigNumber.from(0),
+                    callData: tx.data ?? '0x',
+                    allowFailure: false,
+                };
+            }),
+        ]);
+        const data = BATCH_CALL_SIGNATURE.concat(parseHex(encodedData));
+        return await this.getTransaction({ to, value, data });
     }
 }
 
