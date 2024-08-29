@@ -37,7 +37,12 @@ export const ReceiveView = () => {
                 <span className="text-gray-400 text-sm">
                     Your ZKsync Address
                 </span>
-                <span className="font-semibold">
+                <span
+                    className="font-semibold text-center"
+                    style={{
+                        overflowWrap: 'anywhere',
+                    }}
+                >
                     {credential.publicAddress}
                 </span>
                 <button onClick={copyAddress} className="bPrimary mt-4">
